@@ -33,7 +33,7 @@ class seplis_lookup:
         'movie_year': 'year',
     }
 
-    @plugin.priority(130)
+    @plugin.priority(110)
     def on_task_metainfo(self, task, config):
         if not config:
             return
