@@ -12,6 +12,7 @@ class seplis_lookup:
         'seplis_id': 'id',
         'seplis_title': 'title',
         'seplis_episode_type': 'episode_type',
+        'seplis_year': 'year',
     }
 
     episode_map = {
@@ -54,6 +55,7 @@ class seplis_lookup:
             movie = self.search_by_title(entry['title'], 'movie')
         if not movie:
             return
+        movie['year'] = movie['release_date'][:4] if movie['release_date'] else None
         entry.update_using_map(self.movie_map, movie)
 
     @entry.register_lazy_lookup('seplis_series_lookup')
@@ -65,6 +67,7 @@ class seplis_lookup:
             series = self.search_by_title(entry['series_name'], 'series')
         if not series:
             return
+        series['year'] = series['premiered'][:4] if series['premiered'] else None
         entry.update_using_map(self.series_map, series)
 
     @entry.register_lazy_lookup('seplis_series_episode_lookup')
@@ -123,6 +126,7 @@ class seplis_lookup:
             data = response.json()
             if data:
                 return data[0]
+                
 @event('plugin.register')
 def register_plugin():
     plugin.register(seplis_lookup, 'seplis_lookup', api_ver=2, interfaces=['task', 'series_metainfo', 'movie_metainfo'])
