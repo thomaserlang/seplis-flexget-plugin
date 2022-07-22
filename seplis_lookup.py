@@ -84,6 +84,8 @@ class seplis_lookup:
                 'q': q,
             },
         )
+        if response.status_code != 200:
+            return
         episodes = response.json()
         if not episodes:
             return
@@ -117,8 +119,10 @@ class seplis_lookup:
                 'type': type,
             }
         )
-        return response.json()[0] if response.status_code == 200 else None
-
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                return data[0]
 @event('plugin.register')
 def register_plugin():
     plugin.register(seplis_lookup, 'seplis_lookup', api_ver=2, interfaces=['task', 'series_metainfo', 'movie_metainfo'])
