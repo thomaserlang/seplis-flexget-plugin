@@ -30,7 +30,7 @@ class seplis_movies_stared:
 
         for uid in user_ids:
             r = task.requests.get(
-                f'https://api.seplis.net/1/users/{uid}/shows-following',
+                f'https://api.seplis.net/1/users/{uid}/movies-stared',
                 params={
                     'per_page': 1000,
                 }
