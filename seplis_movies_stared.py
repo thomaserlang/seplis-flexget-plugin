@@ -3,6 +3,7 @@ from loguru import logger
 from flexget import plugin
 from flexget.event import event
 from flexget.utils.cached_input import cached
+from flexget.entry import Entry
 
 logger = logger.bind(name='seplis_movies_stared')
 
@@ -38,10 +39,11 @@ class seplis_movies_stared:
             for movie in r.json():
                 if movie['title']:
                     year = f' ({movie["release_date"][:4]})' if movie['release_date'] else ''
-                    entries.append({
-                        'title': movie['title'] + year,
-                        'seplis_id': movie['id'],
-                    })
+                    entry = Entry()
+                    entry['title'] = movie['title'] + year
+                    entry['seplis_id'] = movie['id']
+                    entry['seplis_year'] = year
+                    entries.append(entry)
         return entries
 
 @event('plugin.register')
