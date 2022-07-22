@@ -43,7 +43,7 @@ class seplis_lookup:
                 entry.add_lazy_fields(self.lazy_series_lookup, self.series_map)
                 if entry.get('series_id_type') in ('ep', 'sequence', 'date'):
                     entry.add_lazy_fields(self.lazy_episode_lookup, self.episode_map)
-            elif entry.get('title'):
+            elif entry.get('movie_name'):
                 entry.add_lazy_fields(self.lazy_movie_lookup, self.movie_map)
             else:
                 log.debug('Unsure how to lookup entry', extra=entry)
@@ -54,9 +54,11 @@ class seplis_lookup:
         if entry.get('seplis_id', eval_lazy=False):
             log.debug(f'Looking up seplis movie from id: {entry["seplis_id"]}')
             movie = self.movie_by_id(entry['seplis_id'])
-        elif entry.get('title'):
-            log.debug(f'Looking up seplis movie from title: {entry["title"]}')
-            movie = self.search_by_title(entry['title'], 'movie')
+        elif entry.get('movie_name'):
+            title = entry['movie_name']
+            title += f' {entry["movie_year"]}' if entry.get('movie_year') else ''
+            log.debug(f'Looking up seplis movie from title: {title}')
+            movie = self.search_by_title(title, 'movie')
         if not movie:
             log.debug('No result')
             return
@@ -71,8 +73,10 @@ class seplis_lookup:
             log.debug(f'Looking up seplis series from id: {entry["seplis_id"]}')
             series = self.series_by_id(entry['seplis_id'])
         elif entry.get('series_name'):
-            log.debug(f'Looking up seplis series from title: {entry["series_name"]}')
-            series = self.search_by_title(entry['series_name'], 'series')
+            title = entry['series_name']
+            title += f' {entry["series_year"]}' if entry.get('series_year') else ''
+            log.debug(f'Looking up seplis series from title: {title}')
+            series = self.search_by_title(title, 'series')
         if not series:
             log.debug('No result')
             return
