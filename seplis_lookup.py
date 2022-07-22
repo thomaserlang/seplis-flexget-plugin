@@ -146,4 +146,4 @@ class seplis_lookup:
                 
 @event('plugin.register')
 def register_plugin():
-    plugin.register(seplis_lookup, 'seplis_lookup', api_ver=2, interfaces=['task', 'series_metainfo', 'movie_metainfo'])
+    plugin.register(seplis_lookup, 'seplis_lookup', api_ver=2, interfaces=[])
