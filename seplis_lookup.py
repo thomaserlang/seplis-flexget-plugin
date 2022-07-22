@@ -2,10 +2,9 @@ from loguru import logger
 
 from flexget import entry, plugin
 from flexget.event import event
-from flexget.utils.cached_input import cached
 from flexget.utils import requests
 
-logger = logger.bind(name='seplis_lookup')
+log = logger.bind(name='seplis_lookup')
 
 class seplis_lookup:
     series_map = {
@@ -45,16 +44,22 @@ class seplis_lookup:
                     entry.add_lazy_fields(self.lazy_episode_lookup, self.episode_map)
             elif entry.get('title'):
                 entry.add_lazy_fields(self.lazy_movie_lookup, self.movie_map)
+            else:
+                log.debug('Unsure how to lookup entry', extra=entry)
 
     @entry.register_lazy_lookup('seplis_movie_lookup')
     def lazy_movie_lookup(self, entry):
         movie = None
         if entry.get('seplis_id', eval_lazy=False):
+            log.debug(f'Looking up seplis movie from id: {entry["seplis_id"]}')
             movie = self.movie_by_id(entry['seplis_id'])
         elif entry.get('title'):
+            log.debug(f'Looking up seplis movie from title: {entry["title"]}')
             movie = self.search_by_title(entry['title'], 'movie')
         if not movie:
+            log.debug('No result')
             return
+        log.debug(f'Found series: {movie["title"]}')
         movie['year'] = movie['release_date'][:4] if movie['release_date'] else None
         entry.update_using_map(self.movie_map, movie)
 
@@ -62,11 +67,15 @@ class seplis_lookup:
     def lazy_series_lookup(self, entry):
         series = None
         if entry.get('seplis_id', eval_lazy=False):
+            log.debug(f'Looking up seplis series from id: {entry["seplis_id"]}')
             series = self.series_by_id(entry['seplis_id'])
         elif entry.get('series_name'):
+            log.debug(f'Looking up seplis series from title: {entry["series_name"]}')
             series = self.search_by_title(entry['series_name'], 'series')
         if not series:
+            log.debug('No result')
             return
+        log.debug(f'Found series: {series["title"]}')
         series['year'] = series['premiered'][:4] if series['premiered'] else None
         entry.update_using_map(self.series_map, series)
 
@@ -82,6 +91,10 @@ class seplis_lookup:
             q = f'number:{entry["series_id"]}'
         elif entry['series_id_type'] == 'date':
             q = f'air_date:"{entry["series_date"].strftime("%Y-%m-%d")}"'
+        else:
+            log.debug('Not supported way of identifying the episode')
+            return
+        log.debug(f'Looking for episode with: {q}')
         response = requests.get(f'https://api.seplis.net/1/shows/{series_id}/episodes',
             params={
                 'q': q,
@@ -93,16 +106,15 @@ class seplis_lookup:
         if not episodes:
             return
         episode = episodes[0]
-        if entry['series_id_type'] == 'sequence':
-            episode['id'] = str(episode['number'])
-        elif entry['series_id_type'] == 'ep':
+        episode['id'] = str(episode['number'])
+        if entry['series_id_type'] == 'ep':
             episode['id'] = 'S{}E{}'.format(
                 str(episode['season']).zfill(2),
                 str(episode['episode']).zfill(2),
             )
         elif entry['series_id_type'] == 'date':
             episode['id'] = episode['air_date']
-
+        log.debug(f'Found episode: {episode["id"]}')
         entry.update_using_map(self.episode_map, episode)
 
     def series_by_id(self, series_id):
