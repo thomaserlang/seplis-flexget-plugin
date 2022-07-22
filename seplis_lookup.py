@@ -38,6 +38,7 @@ class seplis_lookup:
         if not config:
             return
         for entry in task.entries:
+            log.debug(entry)
             if entry.get('series_name'):
                 entry.add_lazy_fields(self.lazy_series_lookup, self.series_map)
                 if entry.get('series_id_type') in ('ep', 'sequence', 'date'):
