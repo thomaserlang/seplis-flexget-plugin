@@ -42,7 +42,7 @@ class seplis_movies_stared:
                     year = int(movie["release_date"][:4]) if movie['release_date'] else None
                     entry = Entry()
                     entry['title'] = movie['title']
-                    entry['title'] =+ f' {year}' if year else ''
+                    entry['title'] += f' {year}' if year else ''
                     entry['seplis_id'] = movie['id']
                     entry['seplis_year'] = year
                     entry['movie_name'] = movie['title']
