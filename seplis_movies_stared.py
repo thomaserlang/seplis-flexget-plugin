@@ -39,13 +39,14 @@ class seplis_movies_stared:
             )
             for movie in r.json():
                 if movie['title']:
-                    year = movie["release_date"][:4] if movie['release_date'] else ''
+                    year = int(movie["release_date"][:4]) if movie['release_date'] else None
                     entry = Entry()
-                    entry['title'] = movie['title'] + year
+                    entry['title'] = movie['title']
+                    entry['title'] =+ f' {year}' if year else ''
                     entry['seplis_id'] = movie['id']
-                    entry['seplis_year'] = int(year) if year else None
+                    entry['seplis_year'] = year
                     entry['movie_name'] = movie['title']
-                    entry['movie_year'] = int(year) if year else None
+                    entry['movie_year'] = year
                     entry['url'] = f'https://seplis.net/movies/{movie["id"]}'
                     entry['imdb_id'] = movie['externals'].get('imdb', None)
                     entry['tmdb_id'] = movie['externals'].get('themoviedb', None)

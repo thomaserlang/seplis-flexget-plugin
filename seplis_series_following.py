@@ -43,16 +43,16 @@ class seplis_series_following:
                 if series['title']:
                     titles = [series['title'], *series['alternative_titles']]
                     for title in titles:
-                        year = series["premiered"][:4] if series['premiered'] else ''
+                        year = int(series["premiered"][:4]) if series['premiered'] else None
                         entry = Entry()
-                        entry['title'] = title + year
+                        entry['title'] = title
+                        entry['title'] =+ f' {year}' if year else ''
                         entry['seplis_id'] = series['id']
-                        entry['seplis_year'] = int(year) if year else None
+                        entry['seplis_year'] = year
                         entry['series_name'] = title
-                        entry['series_year'] = int(year) if year else None
+                        entry['series_year'] = year
                         entry['url'] = f'https://seplis.net/shows/{series["id"]}'
                         entry['imdb_id'] = series['externals'].get('imdb', None)
-                        entry['tmdb_id'] = series['externals'].get('themoviedb', None)
                         if series['premiered']:
                             entry['tmdb_released'] = dateutil_parse(series['premiered']).date()
                         entries.append(entry)
