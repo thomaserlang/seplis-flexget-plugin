@@ -6,7 +6,7 @@ from flexget.utils.cached_input import cached
 from flexget.entry import Entry
 
 
-logger = logger.bind(name='seplis_series_following')
+log = logger.bind(name='seplis_series_following')
 
 class seplis_series_following:
     """
@@ -23,6 +23,7 @@ class seplis_series_following:
     def on_task_input(self, task, config):
         user_ids = []
         entries = []
+        log.debug('Retriving series users following')
         for u in config:
             r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
             d = r.json()
