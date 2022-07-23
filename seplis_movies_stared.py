@@ -40,7 +40,7 @@ class seplis_movies_stared:
             )
             for movie in r.json():
                 if movie['title']:
-                    year = f' ({movie["release_date"][:4]})' if movie['release_date'] else ''
+                    year = movie["release_date"][:4] if movie['release_date'] else ''
                     entry = Entry()
                     entry['title'] = movie['title'] + year
                     entry['seplis_id'] = movie['id']
