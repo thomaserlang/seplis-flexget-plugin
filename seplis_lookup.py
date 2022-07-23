@@ -81,7 +81,7 @@ class seplis_lookup:
             log.debug('No result')
             return
         log.debug(f'Found series: {series["title"]}')
-        series['year'] = series['premiered'][:4] if series['premiered'] else None
+        series['year'] = series['release_date'][:4] if series.get('release_date') else None
         entry.update_using_map(self.series_map, series)
 
     @entry.register_lazy_lookup('seplis_series_episode_lookup')
