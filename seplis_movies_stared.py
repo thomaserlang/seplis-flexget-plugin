@@ -20,7 +20,7 @@ class seplis_movies_stared:
     schema = {
         'type': 'array', # list of usernames
     }
-    @cached('seplis_movies_stared', persist='1 minute')
+    
     def on_task_input(self, task, config):
         user_ids = []
         for u in config:
