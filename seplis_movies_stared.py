@@ -46,6 +46,8 @@ class seplis_movies_stared:
                     entry['seplis_id'] = movie['id']
                     entry['seplis_year'] = year
                     entry['movie_year'] = year
+                    if entry['externals'].get('imdb'):
+                        entry['imdb_id'] = entry['externals']['imdb']
                     if movie['release_date']:
                         entry['tmdb_released'] = dateutil_parse(movie['release_date']).date()
                     entries.append(entry)
