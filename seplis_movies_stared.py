@@ -5,6 +5,8 @@ from flexget.event import event
 from flexget.utils.cached_input import cached
 from flexget.entry import Entry
 
+from dateutil.parser import parse as dateutil_parse
+
 logger = logger.bind(name='seplis_movies_stared')
 
 class seplis_movies_stared:
@@ -43,6 +45,9 @@ class seplis_movies_stared:
                     entry['title'] = movie['title'] + year
                     entry['seplis_id'] = movie['id']
                     entry['seplis_year'] = year
+                    entry['movie_year'] = year
+                    if movie['release_date']:
+                        entry['tmdb_released'] = dateutil_parse(movie['release_date']).date()
                     entries.append(entry)
         return entries
 

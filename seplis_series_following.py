@@ -46,6 +46,7 @@ class seplis_series_following:
                         entry['title'] = title + year
                         entry['seplis_id'] = series['id']
                         entry['seplis_year'] = year
+                        entry['movie_year'] = year
                         entries.append(entry)
         return entries
 
