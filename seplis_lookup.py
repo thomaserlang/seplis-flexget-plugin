@@ -32,7 +32,8 @@ class seplis_lookup:
         'movie_name': 'title',
         'movie_year': 'year',
     }
-
+    
+    # Run after series and metainfo series
     @plugin.priority(110)
     def on_task_metainfo(self, task, config):
         if not config:
@@ -146,4 +147,4 @@ class seplis_lookup:
                 
 @event('plugin.register')
 def register_plugin():
-    plugin.register(seplis_lookup, 'seplis_lookup', api_ver=2, interfaces=['task', 'series_metainfo', 'movie_metainfo'])
+    plugin.register(seplis_lookup, 'seplis_lookup', api_ver=2, interfaces=['task', 'series_metainfo'])
