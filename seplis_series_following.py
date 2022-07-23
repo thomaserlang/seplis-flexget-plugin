@@ -43,7 +43,7 @@ class seplis_series_following:
                     if title:
                         entry = Entry()
                         entry['title'] = series['title']
-                        entry['title'] += f' ({series["primiered"][:4]})' if series['primiered'] else ''
+                        entry['title'] += f' ({series["premiered"][:4]})' if series['premiered'] else ''
                         entry['seplis_id'] = series['id']
                         entries.append(entry)
         return entries
