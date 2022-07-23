@@ -36,14 +36,14 @@ class seplis_series_following:
                     'per_page': 1000,
                 }
             )
-            for show in r.json():
-                titles = [show['title']]
-                titles.extend(show['alternative_titles'])
+            for series in r.json():
+                titles = [series['title'], *series['alternative_titles']]
                 for title in titles:
                     if title:
+                        year = f' {series["premiered"][:4]}' if series['premiered'] else ''
                         entries.append({
-                            'title': title,
-                            'seplis_id': show['id'],
+                            'title': title + year,
+                            'seplis_id': series['id'],
                         })
         return entries
 
