@@ -48,8 +48,7 @@ class seplis_series_following:
                         entry['title'] += f' ({year})' if year else ''
                         entry['seplis_year'] = year
                         entry['seplis_id'] = series['id']
-                        entries.append(entry)
-        return entries
+                        yield entry
 
 @event('plugin.register')
 def register_plugin():
