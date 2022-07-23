@@ -44,14 +44,17 @@ class seplis_movies_stared:
                     entry = Entry()
                     entry['title'] = movie['title'] + year
                     entry['seplis_id'] = movie['id']
+                    entry['imdb_id'] = movie['externals'].get('imdb', None)
+                    entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
+                    entry['url'] = 'https://seplis.net/movies/'+movie['id']
                     entry['seplis_year'] = year
+                    entry['movie_name'] = movie['title']
                     entry['movie_year'] = year
                     if movie['release_date']:
                         entry['tmdb_released'] = dateutil_parse(movie['release_date']).date()
                     if movie.get('imdb'):
                         entry['imdb_id'] = movie['imdb']
-                    entries.append(entry)
-        return entries
+                    yield entry
 
 @event('plugin.register')
 def register_plugin():
