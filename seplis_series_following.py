@@ -3,6 +3,8 @@ from loguru import logger
 from flexget import plugin
 from flexget.event import event
 from flexget.utils.cached_input import cached
+from flexget.entry import Entry
+
 
 logger = logger.bind(name='seplis_series_following')
 
@@ -19,7 +21,6 @@ class seplis_series_following:
     }
     @cached('seplis_series_following', persist='1 minute')
     def on_task_input(self, task, config):
-        entries = []
         user_ids = []
 
         for u in config:
@@ -40,12 +41,11 @@ class seplis_series_following:
                 titles = [series['title'], *series['alternative_titles']]
                 for title in titles:
                     if title:
-                        year = f' {series["premiered"][:4]}' if series['premiered'] else ''
-                        entries.append({
-                            'title': title + year,
-                            'seplis_id': series['id'],
-                        })
-        return entries
+                        entry = Entry()
+                        entry['title'] = series['title']
+                        entry['title'] += f' ({series["primiered"][:4]})' if series['primiered'] else ''
+                        entry['seplis_id'] = series['id']
+                        yield entry
 
 @event('plugin.register')
 def register_plugin():
