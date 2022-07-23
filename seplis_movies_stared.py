@@ -22,7 +22,6 @@ class seplis_movies_stared:
     }
     @cached('seplis_movies_stared', persist='1 minute')
     def on_task_input(self, task, config):
-        entries = []
         user_ids = []
         for u in config:
             r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
@@ -44,16 +43,14 @@ class seplis_movies_stared:
                     entry = Entry()
                     entry['title'] = movie['title'] + year
                     entry['seplis_id'] = movie['id']
-                    entry['imdb_id'] = movie['externals'].get('imdb', None)
-                    entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
-                    entry['url'] = f'https://seplis.net/movies/{movie["id"]}'
                     entry['seplis_year'] = year
                     entry['movie_name'] = movie['title']
                     entry['movie_year'] = year
+                    entry['url'] = f'https://seplis.net/movies/{movie["id"]}'
+                    entry['imdb_id'] = movie['externals'].get('imdb', None)
+                    entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
                     if movie['release_date']:
                         entry['tmdb_released'] = dateutil_parse(movie['release_date']).date()
-                    if movie.get('imdb'):
-                        entry['imdb_id'] = movie['imdb']
                     yield entry
 
 @event('plugin.register')

@@ -5,6 +5,8 @@ from flexget.event import event
 from flexget.utils.cached_input import cached
 from flexget.entry import Entry
 
+from dateutil.parser import parse as dateutil_parse
+
 logger = logger.bind(name='seplis_series_following')
 
 class seplis_series_following:
@@ -46,9 +48,13 @@ class seplis_series_following:
                         entry['title'] = title + year
                         entry['seplis_id'] = series['id']
                         entry['seplis_year'] = year
+                        entry['series_name'] = title
                         entry['series_year'] = year
-                        if series.get('imdb'):
-                            entry['imdb_id'] = series['imdb']
+                        entry['url'] = f'https://seplis.net/shows/{series["id"]}'
+                        entry['imdb_id'] = series['externals'].get('imdb', None)
+                        entry['tmdb_id'] = series['externals'].get('themoviedb', None)
+                        if series['premiered']:
+                            entry['tmdb_released'] = dateutil_parse(series['premiered']).date()
                         entries.append(entry)
         return entries
 
