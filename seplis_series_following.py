@@ -40,6 +40,7 @@ class seplis_series_following:
             )
             for series in r.json():
                 titles = [series['title'], *series['alternative_titles']]
+                log.error(titles)
                 for title in titles:
                     if title:
                         entry = Entry()
