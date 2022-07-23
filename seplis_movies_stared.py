@@ -46,7 +46,7 @@ class seplis_movies_stared:
                     entry['seplis_id'] = movie['id']
                     entry['imdb_id'] = movie['externals'].get('imdb', None)
                     entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
-                    entry['url'] = 'https://seplis.net/movies/'+movie['id']
+                    entry['url'] = f'https://seplis.net/movies/{movie["id"]}'
                     entry['seplis_year'] = year
                     entry['movie_name'] = movie['title']
                     entry['movie_year'] = year
