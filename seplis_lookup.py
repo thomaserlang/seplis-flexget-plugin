@@ -63,7 +63,7 @@ class seplis_lookup:
             log.debug('No result')
             return
         log.debug(f'Found series: {movie["title"]}')
-        movie['year'] = movie['release_date'][:4] if movie['release_date'] else None
+        movie['year'] = int(movie['release_date'][:4]) if movie['release_date'] else None
         entry.update_using_map(self.movie_map, movie)
 
     @entry.register_lazy_lookup('seplis_series_lookup')

@@ -47,9 +47,9 @@ class seplis_series_following:
                         entry = Entry()
                         entry['title'] = title + year
                         entry['seplis_id'] = series['id']
-                        entry['seplis_year'] = year
+                        entry['seplis_year'] = int(year) if year else None
                         entry['series_name'] = title
-                        entry['series_year'] = year
+                        entry['series_year'] = int(year) if year else None
                         entry['url'] = f'https://seplis.net/shows/{series["id"]}'
                         entry['imdb_id'] = series['externals'].get('imdb', None)
                         entry['tmdb_id'] = series['externals'].get('themoviedb', None)
