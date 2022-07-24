@@ -45,7 +45,7 @@ class seplis_series_following:
                         entry = Entry()
                         entry['title'] = series['title']
                         year = int(series["premiered"][:4]) if series['premiered'] else None
-                        entry['title'] += f' ({year})' if year else ''
+                        entry['title'] += f' {year}' if year else ''
                         entry['seplis_year'] = year
                         entry['seplis_id'] = series['id']
                         entries.append(entry)
