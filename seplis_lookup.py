@@ -38,8 +38,12 @@ class seplis_lookup:
     def on_task_metainfo(self, task, config):
         if not config:
             return
+            
         for entry in task.entries:
-            log.debug(entry)
+            if not entry.get('series_name') and not entry.get('movie_name'):
+                if not plugin.get('metainfo_series', 'seplis_lookup').guess_entry(entry):
+                    plugin.get('metainfo_movie', 'seplis_lookup').guess_entry(entry)
+
             if entry.get('series_name'):
                 entry.add_lazy_fields(self.lazy_series_lookup, self.series_map)
                 if entry.get('series_id_type') in ('ep', 'sequence', 'date'):
