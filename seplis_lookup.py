@@ -8,7 +8,7 @@ log = logger.bind(name='seplis_lookup')
 
 class seplis_lookup:
     series_map = {
-        'seplis_id': 'id',
+        'seplis_series_id': 'id',
         'seplis_title': 'title',
         'seplis_episode_type': 'episode_type',
         'seplis_year': 'year',
@@ -24,7 +24,7 @@ class seplis_lookup:
     }
 
     movie_map = {
-        'seplis_id': 'id',
+        'seplis_movie_id': 'id',
         'seplis_title': 'title',
         'seplis_year': 'year',
 
@@ -52,9 +52,9 @@ class seplis_lookup:
     @entry.register_lazy_lookup('seplis_movie_lookup')
     def lazy_movie_lookup(self, entry):
         movie = None
-        if entry.get('seplis_id', eval_lazy=False):
-            log.debug(f'Looking up seplis movie from id: {entry["seplis_id"]}')
-            movie = self.movie_by_id(entry['seplis_id'])
+        if entry.get('seplis_movie_id', eval_lazy=False):
+            log.debug(f'Looking up seplis movie from id: {entry["seplis_movie_id"]}')
+            movie = self.movie_by_id(entry['seplis_movie_id'])
         elif entry.get('movie_name'):
             title = entry['movie_name']
             title += f' {entry["movie_year"]}' if entry.get('movie_year') else ''
@@ -70,9 +70,9 @@ class seplis_lookup:
     @entry.register_lazy_lookup('seplis_series_lookup')
     def lazy_series_lookup(self, entry):
         series = None
-        if entry.get('seplis_id', eval_lazy=False):
-            log.debug(f'Looking up seplis series from id: {entry["seplis_id"]}')
-            series = self.series_by_id(entry['seplis_id'])
+        if entry.get('seplis_series_id', eval_lazy=False):
+            log.debug(f'Looking up seplis series from id: {entry["seplis_series_id"]}')
+            series = self.series_by_id(entry['seplis_series_id'])
         elif entry.get('series_name'):
             title = entry['series_name']
             title += f' {entry["series_year"]}' if entry.get('series_year') else ''
@@ -87,7 +87,7 @@ class seplis_lookup:
 
     @entry.register_lazy_lookup('seplis_series_episode_lookup')
     def lazy_episode_lookup(self, entry):
-        series_id = entry.get('seplis_id')
+        series_id = entry.get('seplis_series_id')
         if not series_id:
             return
         q = ''
@@ -145,6 +145,16 @@ class seplis_lookup:
             if data:
                 return data[0]
                 
+    @property
+    def movie_identifier(self):
+        """Returns the plugin main identifier type"""
+        return 'seplis_movie_id'
+
+    @property
+    def series_identifier(self):
+        """Returns the plugin main identifier type"""
+        return 'seplis_series_id'
+
 @event('plugin.register')
 def register_plugin():
     plugin.register(seplis_lookup, 'seplis_lookup', api_ver=2, interfaces=['task', 'series_metainfo', 'movie_metainfo'])
