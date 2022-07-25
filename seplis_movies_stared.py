@@ -48,6 +48,7 @@ class seplis_movies_stared:
                     entry['movie_name'] = movie['title']
                     entry['movie_year'] = year
                     entry['url'] = f'https://seplis.net/movie/{movie["id"]}'
+                    logger.error(entry['url'])
                     entry['imdb_id'] = movie['externals'].get('imdb', None)
                     entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
                     if movie['release_date']:
