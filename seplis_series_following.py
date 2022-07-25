@@ -41,9 +41,9 @@ class seplis_series_following:
                 titles = [series['title'], *series['alternative_titles']]
                 for title in titles:
                     if title:
+                        year = int(series["premiered"][:4]) if series['premiered'] else None
                         entry = Entry()
                         entry['title'] = series['title']
-                        year = int(series["premiered"][:4]) if series['premiered'] else None
                         entry['title'] += f' {year}' if year else ''
                         entry['url'] = f'https://seplis.net/series/{series["id"]}'
                         entry['seplis_series_id'] = series['id']

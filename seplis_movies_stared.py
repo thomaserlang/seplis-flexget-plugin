@@ -7,7 +7,7 @@ from flexget.entry import Entry
 
 from dateutil.parser import parse as dateutil_parse
 
-logger = logger.bind(name='seplis_movies_stared')
+log = logger.bind(name='seplis_movies_stared')
 
 class seplis_movies_stared:
     """
@@ -22,6 +22,7 @@ class seplis_movies_stared:
     }
     @cached('seplis_movies_stared', persist='1 minute')
     def on_task_input(self, task, config):
+        log.debug('Retriving movies users stared')
         user_ids = []
         for u in config:
             r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
