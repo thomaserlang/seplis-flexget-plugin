@@ -95,14 +95,14 @@ class seplis_lookup:
         if not series_id:
             return
         q = ''
-        if entry['series_id_type'] == 'ep':
+        if entry['series_id_type'] == 'ep' and entry.get('series_season') and entry.get('series_episode'):
             q = f'season:{entry["series_season"]} AND episode:{entry["series_episode"]}'
-        elif entry['series_id_type'] == 'sequence':
+        elif entry['series_id_type'] == 'sequence' and entry.get('series_id'):
             q = f'number:{entry["series_id"]}'
-        elif entry['series_id_type'] == 'date':
+        elif entry['series_id_type'] == 'date' and entry.get('series_date'):
             q = f'air_date:"{entry["series_date"].strftime("%Y-%m-%d")}"'
         else:
-            log.debug('Not supported way of identifying the episode')
+            log.debug(f'No supported way of identifying the episode: {entry}')
             return
         log.debug(f'Looking for episode with: {q}')
         response = requests.get(f'https://api.seplis.net/1/shows/{series_id}/episodes',
