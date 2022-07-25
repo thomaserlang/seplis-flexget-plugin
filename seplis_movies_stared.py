@@ -43,14 +43,9 @@ class seplis_movies_stared:
                     entry = Entry()
                     entry['title'] = movie['title']
                     entry['title'] += f' {year}' if year else ''
-                    entry['seplis_movie_id'] = movie['id']
-                    entry['seplis_year'] = year
-                    entry['movie_name'] = movie['title']
-                    entry['movie_year'] = year
                     entry['url'] = f'https://seplis.net/movie/{movie["id"]}'
-                    logger.error(entry['url'])
-                    entry['imdb_id'] = movie['externals'].get('imdb', None)
-                    entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
+                    entry['seplis_movie_id'] = movie['id']
+                    entry['seplis_title'] = entry['title']
                     if movie['release_date']:
                         entry['tmdb_released'] = dateutil_parse(movie['release_date']).date()
                     yield entry
