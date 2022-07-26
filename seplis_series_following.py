@@ -39,7 +39,7 @@ class seplis_series_following:
                 }
             )
             for series in r.json():
-                titles = [series['title'], *series['alternative_titles']]
+                titles = list(filter(None, [series['title'], *series['alternative_titles']]))
                 for title in titles:
                     if title:
                         year = int(series["premiered"][:4]) if series['premiered'] else None
