@@ -24,6 +24,7 @@ class seplis_movies_stared:
     def on_task_input(self, task, config):
         log.debug('Retriving movies users stared')
         user_ids = []
+        entries = []
         for u in config:
             r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
             d = r.json()
@@ -51,7 +52,8 @@ class seplis_movies_stared:
                         entry['tmdb_released'] = dateutil_parse(movie['release_date']).date()
                     entry['imdb_id'] = movie['externals'].get('imdb', None)
                     entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
-                    yield entry
+                    entries.append(entry)
+        return entries
 
 @event('plugin.register')
 def register_plugin():

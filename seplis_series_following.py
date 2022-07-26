@@ -22,6 +22,7 @@ class seplis_series_following:
     @cached('seplis_series_following', persist='1 minute')
     def on_task_input(self, task, config):
         user_ids = []
+        entries = []
         log.debug('Retriving series users following')
         for u in config:
             r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
@@ -48,7 +49,8 @@ class seplis_series_following:
                         entry['url'] = f'https://seplis.net/series/{series["id"]}'
                         entry['seplis_series_id'] = series['id']
                         entry['seplis_title'] = entry['title']
-                        yield entry
+                        entries.append(entry)
+        return entries
 
 @event('plugin.register')
 def register_plugin():
