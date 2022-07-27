@@ -23,6 +23,7 @@ class seplis_series_following:
     def on_task_input(self, task, config):
         user_ids = []
         entries = []
+        titles = []
         log.debug('Retriving series users following')
         for u in config:
             r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
@@ -39,16 +40,19 @@ class seplis_series_following:
                 }
             )
             for series in r.json():
-                titles = list(filter(None, [series['title'], *series['alternative_titles']]))
+                titles = [series['title'], *series['alternative_titles']]
+                year = int(series["premiered"][:4]) if series['premiered'] else None
                 for title in titles:
                     if title:
-                        year = int(series["premiered"][:4]) if series['premiered'] else None
                         entry = Entry()
-                        entry['title'] = series['title']
+                        entry['title'] = title
                         entry['title'] += f' {year}' if year else ''
+                        if entry['title'] in titles:
+                            continue
                         entry['url'] = f'https://seplis.net/series/{series["id"]}'
                         entry['seplis_series_id'] = series['id']
                         entry['seplis_title'] = entry['title']
+                        titles.append(entry['title'])
                         entries.append(entry)
         return entries
 
