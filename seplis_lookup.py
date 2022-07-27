@@ -50,7 +50,7 @@ class seplis_lookup:
 
             if config['type'] == 'series':
                 if not entry.get('series_name'):
-                    plugin.get('metainfo_series', 'seplis_lookup').guess_entry(entry)
+                    plugin.get('metainfo_series', 'seplis_lookup').guess_entry(entry, allow_seasonless=True)
 
                 if entry.get('series_name'):
                     entry.add_lazy_fields(self.lazy_series_lookup, self.series_map)
