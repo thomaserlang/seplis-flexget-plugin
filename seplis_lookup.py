@@ -67,8 +67,11 @@ class seplis_lookup:
         if not movie:
             log.debug('No result')
             return
-        log.debug(f'Found series: {movie["title"]}')
-        movie['year'] = int(movie['release_date'][:4]) if movie['release_date'] else None
+        year = int(movie["release_date"][:4]) if movie['release_date'] else None
+        movie['year'] = year
+        if year and str(year) not in movie['title']:
+            movie['title'] += f' ({year})' if year else ''
+        log.debug(f'Found movie: {movie["title"]}')
         entry.update_using_map(self.movie_map, movie)
 
     @entry.register_lazy_lookup('seplis_series_lookup')
@@ -85,8 +88,11 @@ class seplis_lookup:
         if not series:
             log.debug('No result')
             return
+        year = int(series["premiered"][:4]) if series['premiered'] else None
+        series['year'] = year
+        if year and str(year) not in series['title']:
+            series['title'] += f' ({year})'
         log.debug(f'Found series: {series["title"]}')
-        series['year'] = series['release_date'][:4] if series.get('release_date') else None
         entry.update_using_map(self.series_map, series)
 
     @entry.register_lazy_lookup('seplis_series_episode_lookup')

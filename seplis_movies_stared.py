@@ -41,10 +41,11 @@ class seplis_movies_stared:
             )
             for movie in r.json():
                 if movie['title']:
-                    year = int(movie["release_date"][:4]) if movie['release_date'] else None
                     entry = Entry()
                     entry['title'] = movie['title']
-                    entry['title'] += f' ({year})' if year else ''
+                    year = int(movie["release_date"][:4]) if movie['release_date'] else None
+                    if year and str(year) not in entry['title']:
+                        entry['title'] += f' ({year})' if year else ''
                     if entry['title'] in titles:
                         continue
                     entry['url'] = f'https://seplis.net/movie/{movie["id"]}'
