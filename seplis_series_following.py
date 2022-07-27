@@ -22,7 +22,6 @@ class seplis_series_following:
     @cached('seplis_series_following', persist='1 minute')
     def on_task_input(self, task, config):
         user_ids = []
-        entries = []
         dup_titles = []
         log.debug('Retriving series users following')
         for u in config:
@@ -47,15 +46,14 @@ class seplis_series_following:
                         entry = Entry()
                         entry['title'] = title
                         if year and str(year) not in entry['title']:
-                            entry['title'] += f' {year}'
+                            entry['title'] += f' ({year})'
                         if entry['title'] in dup_titles:
                             continue
                         entry['url'] = f'https://seplis.net/series/{series["id"]}'
                         entry['seplis_series_id'] = series['id']
                         entry['seplis_title'] = entry['title']
                         dup_titles.append(entry['title'])
-                        entries.append(entry)
-        return entries
+                        yield entry
 
 @event('plugin.register')
 def register_plugin():

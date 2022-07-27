@@ -24,7 +24,6 @@ class seplis_movies_stared:
     def on_task_input(self, task, config):
         log.debug('Retriving movies users stared')
         user_ids = []
-        entries = []
         titles = []
         for u in config:
             r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
@@ -45,7 +44,7 @@ class seplis_movies_stared:
                     year = int(movie["release_date"][:4]) if movie['release_date'] else None
                     entry = Entry()
                     entry['title'] = movie['title']
-                    entry['title'] += f' {year}' if year else ''
+                    entry['title'] += f' ({year})' if year else ''
                     if entry['title'] in titles:
                         continue
                     entry['url'] = f'https://seplis.net/movie/{movie["id"]}'
@@ -56,8 +55,7 @@ class seplis_movies_stared:
                     entry['imdb_id'] = movie['externals'].get('imdb', None)
                     entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
                     titles.append(entry['title'])
-                    entries.append(entry)
-        return entries
+                    yield entry
 
 @event('plugin.register')
 def register_plugin():
