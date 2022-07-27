@@ -38,22 +38,25 @@ class seplis_series_following:
                     'per_page': 1000,
                 }
             )
-            for series in r.json():
-                titles = [series['title'], *series['alternative_titles']]
+            for series in r.json():                
+                entry = Entry()
+                if not series['title']:
+                    continue
+                entry['title'] = series['title']
                 year = int(series["premiered"][:4]) if series['premiered'] else None
-                for title in titles:
-                    if title:
-                        entry = Entry()
-                        entry['title'] = title
-                        if year and str(year) not in entry['title']:
-                            entry['title'] += f' ({year})'
-                        if entry['title'] in dup_titles:
-                            continue
-                        entry['url'] = f'https://seplis.net/series/{series["id"]}'
-                        entry['seplis_series_id'] = series['id']
-                        entry['seplis_title'] = entry['title']
-                        dup_titles.append(entry['title'])
-                        yield entry
+                if year and str(year) not in entry['title']:
+                    entry['title'] += f' ({year})'
+                if entry['title'] in dup_titles:
+                    continue
+                entry['alternate_name'] = list(filter(None, series['alternative_titles']))
+                entry['url'] = f'https://seplis.net/series/{series["id"]}'
+                entry['seplis_series_id'] = series['id']
+                entry['seplis_title'] = entry['title']
+                entry['imdb_id'] = entry['externals'].get('imdb', None)
+                entry['tvmaze_id'] = entry['externals'].get('tvmaze_id', None)
+                entry['tvdb_id'] = entry['externals'].get('thetvdb', None)
+                dup_titles.append(entry['title'])
+                yield entry
 
 @event('plugin.register')
 def register_plugin():
