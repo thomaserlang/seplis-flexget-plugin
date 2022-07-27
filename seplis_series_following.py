@@ -46,7 +46,8 @@ class seplis_series_following:
                     if title:
                         entry = Entry()
                         entry['title'] = title
-                        entry['title'] += f' {year}' if year else ''
+                        if year and year not in entry['title']:
+                            entry['title'] += f' {year}'
                         if entry['title'] in dup_titles:
                             continue
                         entry['url'] = f'https://seplis.net/series/{series["id"]}'
