@@ -52,9 +52,9 @@ class seplis_series_following:
                 entry['url'] = f'https://seplis.net/series/{series["id"]}'
                 entry['seplis_series_id'] = series['id']
                 entry['seplis_title'] = entry['title']
-                entry['imdb_id'] = entry['externals'].get('imdb', None)
-                entry['tvmaze_id'] = entry['externals'].get('tvmaze_id', None)
-                entry['tvdb_id'] = entry['externals'].get('thetvdb', None)
+                entry['imdb_id'] = series['externals'].get('imdb', None)
+                entry['tvmaze_id'] = series['externals'].get('tvmaze_id', None)
+                entry['tvdb_id'] = series['externals'].get('thetvdb', None)
                 dup_titles.append(entry['title'])
                 yield entry
 
