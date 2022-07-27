@@ -32,6 +32,14 @@ class seplis_lookup:
         'movie_year': 'year',
     }
     
+    schema ={
+        "type": "object",
+        "properties": {
+            "type": {"type": "string"}, # series or movie
+        },
+        "additionalProperties": False
+    }
+
     # Run after series and metainfo series
     @plugin.priority(110)
     def on_task_metainfo(self, task, config):
@@ -39,18 +47,31 @@ class seplis_lookup:
             return
             
         for entry in task.entries:
-            if not entry.get('series_name') and not entry.get('movie_name'):
-                if not plugin.get('metainfo_series', 'seplis_lookup').guess_entry(entry):
+
+            if config['type'] == 'series':
+                if not entry.get('series_name'):
+                    plugin.get('metainfo_series', 'seplis_lookup').guess_entry(entry)
+
+                if entry.get('series_name'):
+                    entry.add_lazy_fields(self.lazy_series_lookup, self.series_map)
+                    if entry.get('series_id_type') in ('ep', 'sequence', 'date'):
+                        entry.add_lazy_fields(self.lazy_episode_lookup, self.episode_map)
+                    else:
+                        log.debug(f'Found not series_id_type for: {entry}')
+                else:
+                    log.debug(f'Didn\'t find series_name for: {entry}')
+
+            elif config['type'] == 'movie':
+                if not entry.get('movie_name'):
                     plugin.get('metainfo_movie', 'seplis_lookup').guess_entry(entry)
 
-            if entry.get('series_name'):
-                entry.add_lazy_fields(self.lazy_series_lookup, self.series_map)
-                if entry.get('series_id_type') in ('ep', 'sequence', 'date'):
-                    entry.add_lazy_fields(self.lazy_episode_lookup, self.episode_map)
-            elif entry.get('movie_name'):
-                entry.add_lazy_fields(self.lazy_movie_lookup, self.movie_map)
+                if entry.get('movie_name'):  
+                    entry.add_lazy_fields(self.lazy_movie_lookup, self.movie_map)
+                else:
+                    log.debug(f'Didn\'t find movie_name for: {entry}')
+
             else:
-                log.debug('Unsure how to lookup entry', extra=entry)
+                log.error(f'Type must be: series or movie')
 
     @entry.register_lazy_lookup('seplis_movie_lookup')
     def lazy_movie_lookup(self, entry):
