@@ -10,7 +10,6 @@ class seplis_lookup:
     series_map = {
         'seplis_series_id': 'id',
         'seplis_title': 'title',
-        'seplis_episode_type': 'episode_type',
         'seplis_year': 'year',
     }
 
@@ -88,7 +87,7 @@ class seplis_lookup:
         if not series:
             log.debug('No result')
             return
-        year = int(series["premiered"][:4]) if series['premiered'] else None
+        year = int(series["release_date"][:4]) if series['release_date'] else None
         series['year'] = year
         if year and str(year) not in series['title']:
             series['title'] += f' ({year})'
