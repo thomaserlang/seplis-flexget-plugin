@@ -60,20 +60,6 @@ class seplis_movies_stared:
                     titles.append(entry['title'])
                     yield entry
 
-
-class seplis_estimate_movie:
-
-    @plugin.priority(2)
-    def estimate(self, entry):
-        release_date = entry.get('seplis_release_date')
-        if not release_date:
-            return
-        return {
-            'data_exists': True,
-            'entity_date': release_date,
-        }
-
 @event('plugin.register')
 def register_plugin():
     plugin.register(seplis_movies_stared, 'seplis_movies_stared', api_ver=2)
-    plugin.register(seplis_estimate_movie, 'est_movies_seplis', api_ver=2, interfaces=['estimate_release'])
