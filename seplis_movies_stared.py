@@ -53,13 +53,27 @@ class seplis_movies_stared:
                     entry['seplis_title'] = entry['title']
                     if movie['release_date']:
                         entry['tmdb_released'] = dateutil_parse(movie['release_date']).date()
-                        entry['entity_date'] = entry['tmdb_released']
+                        entry['seplis_release_date'] = entry['tmdb_released']
                     entry['imdb_id'] = movie['externals'].get('imdb', None)
                     entry['tmdb_id'] = movie['externals'].get('themoviedb', None)
                     entry['movie_year'] = year 
                     titles.append(entry['title'])
                     yield entry
 
+
+class seplis_estimate_movie:
+
+    @plugin.priority(2)
+    def estimate(self, entry):
+        release_date = entry.get('seplis_release_date')
+        if not release_date:
+            return
+        return {
+            'data_exists': True,
+            'entity_date': release_date,
+        }
+
 @event('plugin.register')
 def register_plugin():
     plugin.register(seplis_movies_stared, 'seplis_movies_stared', api_ver=2)
+    plugin.register(seplis_estimate_movie, 'est_movies_seplis', api_ver=2, interfaces=['estimate_release'])
