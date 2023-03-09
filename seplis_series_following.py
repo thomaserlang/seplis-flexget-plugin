@@ -13,50 +13,49 @@ class seplis_series_following:
     configure_series:
       from:
         seplis_series_following:
-          - username
+          - play-server-id
     """
 
     schema = {
-        'type': 'array', # list of usernames
+        'type': 'array', # list of play server ids
     }
     @cached('seplis_series_following', persist='1 minute')
     def on_task_input(self, task, config):
-        user_ids = []
-        dup_titles = []
-        log.debug('Retriving series users following')
-        for u in config:
-            r = task.requests.get(f'https://api.seplis.net/1/users?username={u}')
-            d = r.json()
-            if not d:
-                raise plugin.PluginError(f'Unknown user: {u}')
-            user_ids.append(d[0]['id'])
-
-        for uid in user_ids:
-            r = task.requests.get(
-                f'https://api.seplis.net/1/users/{uid}/shows-following',
-                params={
-                    'per_page': 1000,
-                }
-            )
-            for series in r.json():                
-                entry = Entry()
-                if not series['title']:
-                    continue
-                entry['title'] = series['title']
-                year = int(series["premiered"][:4]) if series['premiered'] else None
-                if year and str(year) not in entry['title']:
-                    entry['title'] += f' ({year})'
-                if entry['title'] in dup_titles:
-                    continue
-                entry['alternate_name'] = list(filter(None, series['alternative_titles']))
-                entry['url'] = f'https://seplis.net/series/{series["id"]}'
-                entry['seplis_series_id'] = series['id']
-                entry['seplis_title'] = entry['title']
-                entry['imdb_id'] = series['externals'].get('imdb', None)
-                entry['tvmaze_id'] = series['externals'].get('tvmaze_id', None)
-                entry['tvdb_id'] = series['externals'].get('thetvdb', None)
-                dup_titles.append(entry['title'])
-                yield entry
+        titles = []
+        for play_server_id in config:
+            cursor = None
+            while True:
+                r = task.requests.get(
+                    f'https://api.seplis.net/2/play-servers/{play_server_id}/user-series-following',
+                    params={
+                        'per_page': 100,
+                        'cursor': cursor,
+                    }
+                )
+                data = r.json()
+                for series in data['items']:                
+                    entry = Entry()
+                    if not series['title']:
+                        continue
+                    entry['title'] = series['title']
+                    year = int(series["premiered"][:4]) if series['premiered'] else None
+                    if year and str(year) not in entry['title']:
+                        entry['title'] += f' ({year})'
+                    if entry['title'] in titles:
+                        continue
+                    entry['alternate_name'] = list(filter(None, series['alternative_titles']))
+                    entry['url'] = f'https://seplis.net/series/{series["id"]}'
+                    entry['seplis_series_id'] = series['id']
+                    entry['seplis_title'] = entry['title']
+                    entry['imdb_id'] = series['externals'].get('imdb', None)
+                    entry['tvmaze_id'] = series['externals'].get('tvmaze_id', None)
+                    entry['tvdb_id'] = series['externals'].get('thetvdb', None)
+                    entry['tmdb_id'] = series['externals'].get('themoviedb', None)
+                    titles.append(entry['title'])
+                    yield entry
+                if not data['cursor']:
+                    break
+                cursor = data['cursor']
 
 @event('plugin.register')
 def register_plugin():
