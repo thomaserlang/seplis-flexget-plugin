@@ -120,18 +120,25 @@ class seplis_lookup:
         series_id = entry.get('seplis_series_id')
         if not series_id:
             return
-        q = ''
+        q = {}
         if entry['series_id_type'] == 'ep' and entry.get('series_season') and entry.get('series_episode'):
-            q = f'season:{entry["series_season"]} AND episode:{entry["series_episode"]}'
+            q = {
+                'season': entry["series_season"],
+                'episode': entry["series_episode"],
+            }
         elif entry['series_id_type'] == 'sequence' and entry.get('series_id'):
-            q = f'number:{entry["series_id"]}'
+            q = {
+                'number': entry["series_id"],
+            }
         elif entry['series_id_type'] == 'date' and entry.get('series_date'):
-            q = f'air_date:"{entry["series_date"].strftime("%Y-%m-%d")}"'
+            q = {
+                'air_date': entry["series_date"].strftime("%Y-%m-%d")
+            }
         else:
             log.debug(f'No supported way of identifying the episode: {entry}')
             return
         log.debug(f'Looking for episode with: {q}')
-        response = requests.get(f'https://api.seplis.net/1/shows/{series_id}/episodes',
+        response = requests.get(f'https://api.seplis.net/2/series/{series_id}/episodes',
             params={
                 'q': q,
             },
@@ -139,9 +146,9 @@ class seplis_lookup:
         if response.status_code != 200:
             return
         episodes = response.json()
-        if not episodes:
+        if not episodes['items']:
             return
-        episode = episodes[0]
+        episode = episodes['items'][0]
         episode['id'] = str(episode['number'])
         if entry['series_id_type'] == 'ep':
             episode['id'] = 'S{}E{}'.format(
@@ -154,17 +161,17 @@ class seplis_lookup:
         entry.update_using_map(self.episode_map, episode)
 
     def series_by_id(self, series_id):
-        response = requests.get(f'https://api.seplis.net/1/shows/{series_id}')
+        response = requests.get(f'https://api.seplis.net/2/series/{series_id}')
         if response.status_code == 200:
             return response.json()
 
     def movie_by_id(self, movie_id):
-        response = requests.get(f'https://api.seplis.net/1/shows/{movie_id}')
+        response = requests.get(f'https://api.seplis.net/2/movies/{movie_id}')
         if response.status_code == 200:
             return response.json()
 
     def search_by_title(self, title, type):
-        response = requests.get('https://api.seplis.net/1/search',
+        response = requests.get('https://api.seplis.net/2/search',
             params={
                 'title': title,
                 'type': type,
