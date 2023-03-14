@@ -26,7 +26,7 @@ class seplis_series_following_missing_episodes:
             cursor = None
             while True:
                 r = task.requests.get(
-                    f'https://api.seplis.net/2/play-servers/{play_server_id}/user-series-following-',
+                    f'https://api.seplis.net/2/play-servers/{play_server_id}/user-series-following-missing-episodes',
                     params={
                         'per_page': 100,
                         'cursor': cursor,
