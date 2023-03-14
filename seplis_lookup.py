@@ -32,12 +32,17 @@ class seplis_lookup:
         'movie_year': 'year',
     }
     
-    schema ={
-        "type": "object",
-        "properties": {
-            "type": {"type": "string"}, # series or movie
-        },
-        "additionalProperties": False
+    schema = {
+        'oneOf': [
+            {
+                'type': 'object',
+                'properties': {
+                    'type': {'type': 'string'}, # series or movie
+                },
+                'additionalProperties': False
+            },
+            {'type': 'boolean'},
+        ]
     }
 
     # Run after series and metainfo series
@@ -48,7 +53,7 @@ class seplis_lookup:
             
         for entry in task.entries:
 
-            if config['type'] == 'series':
+            if config == True or config['type'] == 'series':
                 if not entry.get('series_name'):
                     plugin.get('metainfo_series', 'seplis_lookup').guess_entry(entry)
 
