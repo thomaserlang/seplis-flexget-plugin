@@ -139,9 +139,7 @@ class seplis_lookup:
             return
         log.debug(f'Looking for episode with: {q}')
         response = requests.get(f'https://api.seplis.net/2/series/{series_id}/episodes',
-            params={
-                'q': q,
-            },
+            params=q,
         )
         if response.status_code != 200:
             return
