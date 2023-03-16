@@ -32,7 +32,7 @@ class seplis_lookup:
         'movie_year': 'year',
     }
     
-    schema ={
+    schema = {
         "type": "object",
         "properties": {
             "type": {"type": "string"}, # series or movie
@@ -73,6 +73,7 @@ class seplis_lookup:
             else:
                 log.error(f'Type must be: series or movie')
 
+
     @entry.register_lazy_lookup('seplis_movie_lookup')
     def lazy_movie_lookup(self, entry):
         movie = None
@@ -94,6 +95,7 @@ class seplis_lookup:
         log.debug(f'Found movie: {movie["title"]}')
         entry.update_using_map(self.movie_map, movie)
 
+
     @entry.register_lazy_lookup('seplis_series_lookup')
     def lazy_series_lookup(self, entry):
         series = None
@@ -114,6 +116,7 @@ class seplis_lookup:
             series['title'] += f' ({year})'
         log.debug(f'Found series: {series["title"]}')
         entry.update_using_map(self.series_map, series)
+
 
     @entry.register_lazy_lookup('seplis_series_episode_lookup')
     def lazy_episode_lookup(self, entry):
@@ -158,15 +161,18 @@ class seplis_lookup:
         log.debug(f'Found episode: {episode["id"]}')
         entry.update_using_map(self.episode_map, episode)
 
+
     def series_by_id(self, series_id):
         response = requests.get(f'https://api.seplis.net/2/series/{series_id}')
         if response.status_code == 200:
             return response.json()
 
+
     def movie_by_id(self, movie_id):
         response = requests.get(f'https://api.seplis.net/2/movies/{movie_id}')
         if response.status_code == 200:
             return response.json()
+
 
     def search_by_title(self, title, type):
         response = requests.get('https://api.seplis.net/2/search',
@@ -179,16 +185,19 @@ class seplis_lookup:
             data = response.json()
             if data:
                 return data[0]
-                
+
+
     @property
     def movie_identifier(self):
         """Returns the plugin main identifier type"""
         return 'seplis_movie_id'
 
+
     @property
     def series_identifier(self):
         """Returns the plugin main identifier type"""
         return 'seplis_series_id'
+
 
 @event('plugin.register')
 def register_plugin():
