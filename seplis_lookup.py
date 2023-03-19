@@ -198,7 +198,7 @@ class seplis_lookup:
         )
         if response.status_code == 200:
             data = response.json()
-            _cache[key] = data
+            _cache[key] = data[0] if data else None
             if data:
                 return data[0]
 
