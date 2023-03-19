@@ -6,6 +6,8 @@ from flexget.utils import requests
 
 log = logger.bind(name='seplis_lookup')
 
+_cache = {}
+
 class seplis_lookup:
     series_map = {
         'seplis_series_id': 'id',
@@ -163,18 +165,31 @@ class seplis_lookup:
 
 
     def series_by_id(self, series_id):
+        key = f'series-{series_id}'
+        if key in _cache:
+            return _cache[key]
         response = requests.get(f'https://api.seplis.net/2/series/{series_id}')
         if response.status_code == 200:
-            return response.json()
+            d = response.json()
+            _cache[key] = d
+            return d
 
 
     def movie_by_id(self, movie_id):
+        key = f'movie-{movie_id}'
+        if key in _cache:
+            return _cache[key]
         response = requests.get(f'https://api.seplis.net/2/movies/{movie_id}')
         if response.status_code == 200:
-            return response.json()
+            d = response.json()
+            _cache[key] = d
+            return d
 
 
     def search_by_title(self, title, type):
+        key = f'search-{type}-{title}'
+        if key in _cache:
+            return _cache[key]
         response = requests.get('https://api.seplis.net/2/search',
             params={
                 'title': title,
@@ -183,6 +198,7 @@ class seplis_lookup:
         )
         if response.status_code == 200:
             data = response.json()
+            _cache[key] = data
             if data:
                 return data[0]
 
