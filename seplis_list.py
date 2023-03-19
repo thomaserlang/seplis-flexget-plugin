@@ -97,6 +97,12 @@ class seplis_list:
         entry['tvmaze_id'] = series['externals'].get('tvmaze_id', None)
         entry['tvdb_id'] = series['externals'].get('thetvdb', None)
         entry['tmdb_id'] = series['externals'].get('themoviedb', None)
+        if series['episode_type'] == 1:
+            entry['identified_by'] = 'sequence'
+        elif series['episode_type'] == 2:
+            entry['identified_by'] = 'ep'
+        elif series['episode_type'] == 3:
+            entry['identified_by'] = 'date'        
         return entry
     
 
