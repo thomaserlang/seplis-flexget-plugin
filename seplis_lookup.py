@@ -94,6 +94,7 @@ class seplis_lookup:
         movie['year'] = year
         if year and str(year) not in movie['title']:
             movie['title'] += f' ({year})' if year else ''
+            entry['alternate_name'] = [movie['title']]
         log.debug(f'Found movie: {movie["title"]}')
         entry.update_using_map(self.movie_map, movie)
 
@@ -116,6 +117,7 @@ class seplis_lookup:
         series['year'] = year
         if year and str(year) not in series['title']:
             series['title'] += f' ({year})'
+            entry['alternate_name'] = [series['title']]
         log.debug(f'Found series: {series["title"]}')
         entry.update_using_map(self.series_map, series)
 
